@@ -6,7 +6,7 @@
 int main(int argc, char* argv[]) {
     
     // number of processes
-    int processesNo = 3;
+    int processesNo = atoi(argv[1]);
 
 
     // TODO: create two message queues for each of the process and disk
@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
         args[2] = upQueueId;
         args[3] = downQueueId;
         args[4] = NULL;
-        
+
         execvp(args[0], args);
         printf("Starting process no. %d failed\n", i);
         return 2;
