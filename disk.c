@@ -1,9 +1,11 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 int main(int argc, char* argv[]) {
     
-    // msgQueueId = stoi(argv[1]);
+    int msgUpQueueId = atoi(argv[1]);
+    int msgDownQueueId = atoi(argv[2]);
 
     //TODO: implement Disk
 }
