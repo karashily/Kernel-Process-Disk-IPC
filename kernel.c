@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
     while(pid && i++ <= processesNo) {
 		pid = fork();
 		if(pid < 0) {
-            printf("Forking failed.");
+            printf("Forking failed. \n");
             return 3;
         }
         else if(pid>0) pids[i] = pid;	
@@ -27,22 +27,22 @@ int main(int argc, char* argv[]) {
     
     int processMsgUpQueueId = msgget(IPC_PRIVATE, IPC_CREAT|IPC_EXCL);
     if (processMsgUpQueueId == -1) {
-        printf("failed to create process msg up queue.");
+        printf("failed to create process msg up queue. \n");
         return 4;
     }
     int processMsgDownQueueId = msgget(IPC_PRIVATE, IPC_CREAT|IPC_EXCL);
     if (processMsgDownQueueId == -1) {
-        printf("failed to create process msg down queue.");
+        printf("failed to create process msg down queue. \n");
         return 4;
     }
     int diskMsgUpQueueId = msgget(IPC_PRIVATE, IPC_CREAT|IPC_EXCL);
     if (diskMsgUpQueueId == -1) {
-        printf("failed to create disk msg up queue.");
+        printf("failed to create disk msg up queue. \n");
         return 4;
     }
     int diskMsgDownQueueId = msgget(IPC_PRIVATE, IPC_CREAT|IPC_EXCL);
     if (diskMsgDownQueueId == -1) {
-        printf("failed to create disk msg down queue.");
+        printf("failed to create disk msg down queue. \n");
         return 4;
     }
     
