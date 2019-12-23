@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
     msggbuf msg;
     while(true){
       //receiving meassage......
-      int received = msgrcv(msgDownQueueId,&msg,sizeof msg,0,!IPC_NOWAIT);
+      int received = msgrcv(msgDownQueueId,&msg,sizeof msg,0,IPC_NOWAIT);
       if(received != -1){
         //add operation......
         if(msg.mtype == 1){
@@ -87,7 +87,7 @@ void handler1(int signum){
   msggbuf msg;
   msg.number_of_free_slots = free_slots;
   msg.mtype = 1; //type of status message on the up stream.......
-  int sent = msgsnd(up_stream , &msg , sizeof msg , !IPC_NOWAIT);
+  int sent = msgsnd(up_stream , &msg , sizeof msg , IPC_NOWAIT);
   printf("My Pid is [%d], and i have got signal #%d to send my status to kerenl.....\n",getpid(), signum);
 }
 

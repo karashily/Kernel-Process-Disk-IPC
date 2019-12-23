@@ -76,8 +76,8 @@ void handler1(int signum){
   printf("OUCH....\nSignal #%d received\n",signum);
   kill(pid , SIGUSR1);
   sleep(1);
-  int received = msgrcv(up_stream,&msg,sizeof msg,0,!IPC_NOWAIT);
-  printf("%d\n" , msg.number_of_free_slots);	
+  int received = msgrcv(up_stream,&msg,sizeof msg,0,IPC_NOWAIT);
+  if(received != -1)printf("number of slots = %d\n" , msg.number_of_free_slots);	
   
 }
 
@@ -94,7 +94,7 @@ void handler(int signum)
   msg.mtype = 1;
   strcpy(msg.mtext,arr) ;
   printf("OUCH....\nSignal #%d received\n",signum);
-  int sent = msgsnd(down_stream , &msg , sizeof msg ,  !IPC_NOWAIT );
+  int sent = msgsnd(down_stream , &msg , sizeof msg ,  IPC_NOWAIT );
   if(sent != -1) printf("sent successfully...!\n");
 }
 
