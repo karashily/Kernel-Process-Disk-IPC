@@ -97,4 +97,3 @@ void handler(int signum)
   int sent = msgsnd(down_stream , &msg , sizeof msg ,  IPC_NOWAIT );
   if(sent != -1) printf("sent successfully...!\n");
 }
-

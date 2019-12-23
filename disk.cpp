@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
             // check if free....
             if(!strlen(slots[i])){
               strcpy(slots[i] , msg.mtext);
-              
+
             }
           }
 	   printf("message %s added successfully.....!\n" , msg.mtext);
