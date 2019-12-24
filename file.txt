@@ -1,3 +1,3 @@
-1 add hello
-4 add thisisme
-5 del 1	
+0 ADD hello2222
+1 ADD hello5555
+3 DEL 0

@@ -35,10 +35,11 @@ int main(int argc, char* argv[]) {
     const int M = 64;
     // 10 slots whith max 64 chars
     char slots[N][M];
-    msggbuf msg;
+    
     while(true){
+      msggbuf msg;
       //receiving meassage......
-      int received = msgrcv(msgDownQueueId,&msg,sizeof msg,0,IPC_NOWAIT);
+      int received = msgrcv(msgDownQueueId,&msg,sizeof msg,0,!IPC_NOWAIT);
       if(received != -1){
         //add operation......
         if(msg.mtype == 1){
@@ -65,7 +66,7 @@ int main(int argc, char* argv[]) {
           for(int i = 0 ; i < 64 ; ++i){
             slots[id][i] = '\0';
           }
-	  printf("message at slot %d deleted successfully..\n" , id);
+	        printf("message at slot %d deleted successfully..\n" , id);
           while(current_clock+1 > clk){} //wait 1 second............
         }
 
@@ -79,15 +80,14 @@ int main(int argc, char* argv[]) {
 
 void handler2(int signum){
   clk++;
-  printf("My Pid is [%d], and i have got signal #%d to increment my clock %d.......\n",getpid(), signum ,clk);
+  //printf("My Pid is [%d], and i have got signal #%d to increment my clock %d.......\n",getpid(), signum ,clk);
 }
 
 void handler1(int signum){
-  printf("here is my status(number of free slots)......\n");
   msggbuf msg;
   msg.number_of_free_slots = free_slots;
   msg.mtype = 1; //type of status message on the up stream.......
   int sent = msgsnd(up_stream , &msg , sizeof msg , IPC_NOWAIT);
-  printf("My Pid is [%d], and i have got signal #%d to send my status to kerenl.....\n",getpid(), signum);
+  //printf("My Pid is [%d], and i have got signal #%d to send my status to kerenl.....\n",getpid(), signum);
 }
 

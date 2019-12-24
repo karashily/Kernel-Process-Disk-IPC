@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <signal.h>
 using namespace std;
-int clk;
+int clk=0;
 struct msggbuf {
 long mtype; // type of message...
 char mtext[64]; // data to write.....
@@ -20,7 +20,7 @@ int number_of_free_slots; //number of free slots ro send to kernel......
 int main() {
 
     // number of processes
-    int processesNo =1;
+    int processesNo =2;
     //atoi(argv[1]);
 
 
@@ -46,6 +46,7 @@ int main() {
     while(pid && i++ <= processesNo) {
 		pid = fork();
 		if(pid) pids[i] = pid;
+    printf("%d\n" , pid);
 	}
 
     if(!pid && i == processesNo + 1) {
@@ -100,31 +101,31 @@ int main() {
     else {
 
       while(true){
+	printf("at clock %d \n" , clk);
         //receiving message from processes....
         msggbuf received_msg;
         int receive = msgrcv(processMsgUpQueueId,&received_msg,sizeof received_msg,0,IPC_NOWAIT);
-        if(receive == -1) printf("there is no messages from processes...!\n");
+	      if(receive == -1) printf("there is no messages from processes...!\n");
         else{
           //identify type pf message....
           //add
           if(received_msg.mtype == 1){
               //check status of disk.....
-              kill(pids[processesNo],SIGUSR1);
-              sleep(1);
-              //get status
+              kill(pids[processesNo+1],SIGUSR1);
+	      //get status
               msggbuf status;
-              int chk = msgrcv(diskMsgUpQueueId,&status,sizeof status,0,IPC_NOWAIT);
+              int chk = msgrcv(diskMsgUpQueueId,&status,sizeof status,0,!IPC_NOWAIT);
               if(chk == -1){
                 printf("failed to get disk status....!\n" );
               }
               else{
-                //valid....
+                //valid...
                 if(status.number_of_free_slots > 0){
                   //add
                   msggbuf msg;
                   msg.mtype = 1;
                   strcpy(msg.mtext , received_msg.mtext);
-                  int add = msgsnd(diskMsgDownQueueId , &msg , sizeof msg ,  IPC_NOWAIT );
+                  int add = msgsnd(diskMsgDownQueueId , &msg , sizeof msg ,  !IPC_NOWAIT );
                 }
                 else{
                   printf("there is no space in memory.....!\n");
@@ -136,7 +137,7 @@ int main() {
               msggbuf msg;
               msg.mtype = 2;
               msg.id_to_delete = received_msg.id_to_delete;
-              int del = msgsnd(diskMsgDownQueueId , &msg , sizeof msg ,  IPC_NOWAIT );
+              int del = msgsnd(diskMsgDownQueueId , &msg , sizeof msg ,  !IPC_NOWAIT );
               if(del == -1){
                 printf("failed to delete....!\n");
               }
@@ -145,17 +146,15 @@ int main() {
             }
         }
       }
-
+      sleep(1);
       // Kernel
       // use pids array to send clk signal to all processes
-      for(int i = 1 ; i<=processesNo ; i++){
-        kill(pids[i] , SIGUSR2);
+      for(int j = 1 ; j<=processesNo+1 ; j++){
+        kill(pids[j] , SIGUSR2);
       }
       clk++;
-      sleep(1);
-
-
-    }
+    
+     }
   }
 
 
