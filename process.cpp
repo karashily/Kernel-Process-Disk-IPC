@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
  
    }
 
-   while(true){
+   while(clk <= mx_clk){
      // there is a message to be sent at this time.........
      if(existed[clk]){
 	existed[clk] = 0;
