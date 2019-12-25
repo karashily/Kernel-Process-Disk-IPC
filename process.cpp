@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
          msg.id_to_delete = stoi(msgs[clk].second);
        }
        int sent = msgsnd(msgUpQueueId , &msg , sizeof msg , !IPC_NOWAIT);
-       if(sent == -1) printf("process #%d failed to send message...\n" , processNo);
+       if(sent == -1) printf("process #%d: failed to send message %s...\n" , processNo, msg.mtext);
      }
    }
    printf("Process #%d terminated..!\n", processNo);

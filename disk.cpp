@@ -53,13 +53,15 @@ int main(int argc, char* argv[]) {
             // check if free....
             if(!strlen(slots[i])){
               strcpy(slots[i] , msg.mtext);
-              printf("message %s added successfully at slot %d.....!\n" , msg.mtext, i);
+              printf("Disk: message %s is being added at slot %d.....!\n" , msg.mtext, i);
 	      added = true;
+        while(current_clock+3 > clk){} //wait 3 seconds............
+     printf("Disk: message %s added successfully at slot %d.....!\n" , msg.mtext, i);
               break;
             }
           }
 	  if(!added)
-              printf("there's no free slots for message %s\n" , msg.mtext);
+              printf("Disk: no free slots for message %s\n" , msg.mtext);
 
 	   while(current_clock+3 > clk){} //wait 3 seconds............
         }
@@ -73,13 +75,13 @@ int main(int argc, char* argv[]) {
           for(int i = 0 ; i < 64 ; ++i){
             slots[id][i] = '\0';
           }
-	        printf("message at slot %d deleted successfully..\n" , id);
+	        printf("Disk: message at slot %d deleted successfully..\n" , id);
           while(current_clock+1 > clk){} //wait 1 second............
         }
 
       }
       else{
-        printf("no messages\n");
+        printf("Disk: no messages\n");
       }
     }
 

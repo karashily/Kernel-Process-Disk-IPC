@@ -54,7 +54,7 @@ int main() {
     while(pid && i++ <= processesNo) {
 		pid = fork();
 		if(pid) pids[i] = pid;
-    printf("%d\n" , pid);
+//    printf("%d\n" , pid);
 	}
 
     if(!pid && i == processesNo + 1) {
@@ -119,11 +119,11 @@ int main() {
 	num_messages_from_processes = buf2.msg_qnum;
 	if(number_of_killed_processes == processesNo && num_messages_to_disk == 0 &&num_messages_from_processes == 0 ) break;
 	
-	printf("at clock %d \n" , clk);
+	printf("\n----at clock %d---- \n" , clk);
         //receiving message from processes....
         msggbuf received_msg;
         int receive = msgrcv(processMsgUpQueueId,&received_msg,sizeof received_msg,0,IPC_NOWAIT);
-	      if(receive == -1) printf("there is no messages from processes...!\n");
+	      if(receive == -1) printf("Kernel: no messages from processes...!\n");
         else{
           //identify type pf message....
           //add
@@ -134,7 +134,7 @@ int main() {
               msggbuf status;
               int chk = msgrcv(diskMsgUpQueueId,&status,sizeof status,0,!IPC_NOWAIT);
               if(chk == -1){
-                printf("failed to get disk status....!\n" );
+                printf("Kernel: failed to get disk status....!\n" );
               }
               else{
                 //valid...
@@ -147,7 +147,7 @@ int main() {
 
                 }
                 else{
-                  printf("there is no space in memory.....!\n");
+                  printf("Kernel: there is no space in memory.....!\n");
                 }
               }
           }
@@ -158,10 +158,10 @@ int main() {
               msg.id_to_delete = received_msg.id_to_delete;
               int del = msgsnd(diskMsgDownQueueId , &msg , sizeof msg ,  !IPC_NOWAIT );
               if(del == -1){
-                printf("failed to delete....!\n");
+                printf("Kernel: failed to delete....!\n");
               }
               else{
-                printf("deleted request is successful....\n" );
+                printf("Kernel: delete request is successful....\n" );
             }
         }
       }
