@@ -7,9 +7,12 @@
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include <unistd.h>
+#include <sys/wait.h>
 #include <signal.h>
 using namespace std;
 int clk=0;
+int number_of_killed_processes;
+
 struct msggbuf {
 long mtype; // type of message...
 char mtext[64]; // data to write.....
@@ -36,13 +39,13 @@ int main() {
     int diskMsgDownQueueId;
 
     diskMsgUpQueueId =  msgget(IPC_PRIVATE, 0644);
-  	if(diskMsgUpQueueId == -1) { printf("failed to create Up message queue...\n"); return 0;}
-  	diskMsgDownQueueId =  msgget(IPC_PRIVATE, 0644);
-  	if(diskMsgDownQueueId == -1) {printf("failed to create Down message queue...\n"); return 0;}
+    if(diskMsgUpQueueId == -1) { printf("failed to create Up message queue...\n"); return 0;}
+    diskMsgDownQueueId =  msgget(IPC_PRIVATE, 0644);
+    if(diskMsgDownQueueId == -1) {printf("failed to create Down message queue...\n"); return 0;}
     processMsgUpQueueId =  msgget(IPC_PRIVATE, 0644);
-  	if(processMsgUpQueueId == -1) { printf("failed to create Up message queue...\n"); return 0;}
-  	processMsgDownQueueId =  msgget(IPC_PRIVATE, 0644);
-  	if(processMsgDownQueueId == -1) {printf("failed to create Down message queue...\n"); return 0;}
+    if(processMsgUpQueueId == -1) { printf("failed to create Up message queue...\n"); return 0;}
+    processMsgDownQueueId =  msgget(IPC_PRIVATE, 0644);
+    if(processMsgDownQueueId == -1) {printf("failed to create Down message queue...\n"); return 0;}
 
     int* pids = (int*) malloc(processesNo * sizeof(int));
 
@@ -106,6 +109,16 @@ int main() {
     else {
 
       while(true){
+
+	//check if there all processed terminated and there are no messages to receive from processes or send to disk then terminate...
+	struct msqid_ds buf1 , buf2;
+  	int num_messages_to_disk , num_messages_from_processes;
+  	int rc1 = msgctl(diskMsgDownQueueId , IPC_STAT, &buf1);
+	int rc2 = msgctl(processMsgUpQueueId , IPC_STAT, &buf2);
+  	num_messages_to_disk = buf1.msg_qnum;
+	num_messages_from_processes = buf2.msg_qnum;
+	if(number_of_killed_processes == processesNo && num_messages_to_disk == 0 &&num_messages_from_processes == 0 ) break;
+	
 	printf("at clock %d \n" , clk);
         //receiving message from processes....
         msggbuf received_msg;
@@ -131,6 +144,7 @@ int main() {
                   msg.mtype = 1;
                   strcpy(msg.mtext , received_msg.mtext);
                   int add = msgsnd(diskMsgDownQueueId , &msg , sizeof msg ,  !IPC_NOWAIT );
+
                 }
                 else{
                   printf("there is no space in memory.....!\n");
@@ -160,25 +174,28 @@ int main() {
       clk++;
     
      }
+   kill(pids[processesNo+1] , 9);
   }
 
-
+	
     return 0;
 }
 
 void handler(int signum)
 {
 
- printf("Children have sent a SIGCHLD signal #%d\n",signum);
+ //printf("Children have sent a SIGCHLD signal #%d\n",signum);
 
  while (1) {
     int status;
     pid_t pid = waitpid(-1, &status, WNOHANG);
     if (pid <= 0) {
         break;
+    
     }
-    if(!(status & 0x00FF))
-    printf("\nA child with pid %d terminated with exit code %d\n", pid, stat_loc>>8);
+    number_of_killed_processes++;
+    //if(!(status & 0x00FF))
+    //printf("\nA child with pid %d terminated with exit code %d\n", pid, stat_loc>>8);
   }
 
 }

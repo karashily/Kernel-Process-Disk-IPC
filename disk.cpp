@@ -13,6 +13,12 @@ int free_slots = 10;
 int up_stream;
 int down_stream;
 
+const int N = 10;
+const int M = 64;
+// 10 slots whith max 64 chars
+char slots[N][M];
+ 
+
 struct msggbuf {
 long mtype; // type of message...
 char mtext[64]; // data to write.....
@@ -31,10 +37,6 @@ int main(int argc, char* argv[]) {
     int msgDownQueueId = atoi(argv[2]);
     up_stream = msgUpQueueId;
     down_stream = msgDownQueueId;
-    const int N = 10;
-    const int M = 64;
-    // 10 slots whith max 64 chars
-    char slots[N][M];
     
     while(true){
       msggbuf msg;
@@ -43,18 +45,23 @@ int main(int argc, char* argv[]) {
       if(received != -1){
         //add operation......
         if(msg.mtype == 1){
-          free_slots--;
+          free_slots--;	
           int current_clock = clk;
           // searching for a free slot........
-          for(int i = 0 ; i < 10 ; ++i){
+          bool added = false;
+          for(int i = 0 ; i < N ; ++i) {
             // check if free....
             if(!strlen(slots[i])){
               strcpy(slots[i] , msg.mtext);
-
+              printf("message %s added successfully at slot %d.....!\n" , msg.mtext, i);
+	      added = true;
+              break;
             }
           }
-	   printf("message %s added successfully.....!\n" , msg.mtext);
-           while(current_clock+3 > clk){} //wait 3 seconds............
+	  if(!added)
+              printf("there's no free slots for message %s\n" , msg.mtext);
+
+	   while(current_clock+3 > clk){} //wait 3 seconds............
         }
         //delete operation........
         else if(msg.mtype == 2){

@@ -1,3 +1,0 @@
-0 ADD hello2222
-1 ADD hello5555
-3 DEL 0

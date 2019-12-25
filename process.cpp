@@ -31,7 +31,17 @@ int main(int argc, char* argv[]) {
    int processNo = atoi(argv[1]);
    int msgUpQueueId = atoi(argv[2]);
    int msgDownQueueId = atoi(argv[3]);
-   freopen("file.txt" , "r" , stdin);
+   
+   //char processNoStr[12];
+   //sprintf(processNoStr, "%d", processNo);
+
+   string fileName = "file";
+   fileName.append(to_string(processNo));
+   fileName.append(".txt");
+   ifstream cin;
+   cin.open(fileName);
+
+   //freopen(fileName , "r" , stdin);
    string s;
    while(getline(cin , s)){
      stringstream ss(s);
