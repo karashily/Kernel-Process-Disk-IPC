@@ -16,8 +16,13 @@ char mtext[64]; // data to write.....
 int id_to_delete; //id or the slot to free if delete operation.....
 int number_of_free_slots; //number of free slots ro send to kernel......
 };
+void handler(int signum);
+
 
 int main() {
+
+    signal (SIGCHLD, handler);
+
 
     // number of processes
     int processesNo =2;
@@ -159,5 +164,22 @@ int main() {
 
 
     return 0;
+}
+
+void handler(int signum)
+{
+
+ printf("Children have sent a SIGCHLD signal #%d\n",signum);
+
+ while (1) {
+    int status;
+    pid_t pid = waitpid(-1, &status, WNOHANG);
+    if (pid <= 0) {
+        break;
+    }
+    if(!(status & 0x00FF))
+    printf("\nA child with pid %d terminated with exit code %d\n", pid, stat_loc>>8);
+  }
+
 }
 
