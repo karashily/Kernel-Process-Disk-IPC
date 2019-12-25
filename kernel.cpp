@@ -175,9 +175,10 @@ int main() {
     
      }
    kill(pids[processesNo+1] , 9);
+   printf("Disk terminated.....!\n");
   }
 
-	
+	  printf("Kernel terminated....!\n");
     return 0;
 }
 
