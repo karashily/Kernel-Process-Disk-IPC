@@ -75,6 +75,7 @@ int main(int argc, char* argv[]) {
        if(sent == -1) printf("process #%d failed to send message...\n" , processNo);
      }
    }
+   printf("Process #%d terminated..!\n", processNo);
 }
 
 
